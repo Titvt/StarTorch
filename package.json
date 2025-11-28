@@ -1,0 +1,9 @@
+{
+    "name": "startorch",
+    "version": "1.0.0",
+    "description": "StarTorch",
+    "dependencies": {
+        "axios": "1.13.2",
+        "cheerio": "1.1.2"
+    }
+}
