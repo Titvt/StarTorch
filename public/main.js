@@ -1,3 +1,34 @@
+async function getData(book, index) {
+  try {
+    const url = `http://www.shengxuxu.net/${book}/read_${index}.html`;
+    const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
+
+    if (response.ok) {
+      const html = new DOMParser().parseFromString(
+        await response.text(),
+        "text/html"
+      );
+      const title = html.querySelector("h1 a").textContent.trim();
+      const div = html.getElementById("chaptercontent");
+      div.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
+      let lines = div.textContent.split("\n");
+      lines = lines.map((line) => line.trim());
+      lines = lines.filter((line) => line.length > 0);
+      const content = "　　" + lines.join("\n　　");
+      const next = `/?book=${book}&index=${parseInt(index) + 1}`;
+      return {
+        title: title,
+        content: content,
+        next: next,
+      };
+    }
+  } catch {
+    // Error
+  }
+
+  return null;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const params = new URLSearchParams(window.location.search);
@@ -39,10 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (!data) {
-      const response = await fetch(
-        `/.netlify/functions/chapter?book=${book}&index=${index}`
-      );
-      data = await response.json();
+      data = await getData(book, index);
       localStorage.setItem(
         "currentCache",
         JSON.stringify({
@@ -69,20 +97,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       nextData.book !== nextBook ||
       nextData.index !== nextIndex
     ) {
-      const nextResponse = await fetch(
-        `/.netlify/functions/chapter?book=${nextBook}&index=${nextIndex}`
-      );
       localStorage.setItem(
         "nextCache",
         JSON.stringify({
           book: nextBook,
           index: nextIndex,
-          data: await nextResponse.json(),
+          data: await getData(nextBook, nextIndex),
         })
       );
     }
+
+    return;
   } catch {
-    localStorage.removeItem("currentCache");
-    localStorage.removeItem("nextCache");
+    // Error
   }
+
+  localStorage.removeItem("currentCache");
+  localStorage.removeItem("nextCache");
 });
