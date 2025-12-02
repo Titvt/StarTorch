@@ -1,13 +1,75 @@
+const state = {
+  book: localStorage.getItem("book"),
+  index: parseInt(localStorage.getItem("index")) || 0,
+  loadingIndices: new Set(),
+};
+
+const elements = {
+  container: document.getElementById("chapters-container"),
+  settingsContainer: document.getElementById("settings-container"),
+  settingsBtn: document.getElementById("settings-btn"),
+  settingsPanel: document.getElementById("settings-panel"),
+  bookInput: document.getElementById("book-input"),
+  indexInput: document.getElementById("index-input"),
+  confirmBtn: document.getElementById("confirm-btn"),
+};
+
+function showSettings() {
+  elements.settingsPanel.hidden = false;
+  elements.settingsContainer.classList.add("expanded");
+  elements.bookInput.value = state.book || "";
+  elements.indexInput.value = state.index || "";
+}
+
+function hideSettings() {
+  elements.settingsContainer.classList.remove("expanded");
+  setTimeout(() => {
+    if (!elements.settingsContainer.classList.contains("expanded")) {
+      elements.settingsPanel.hidden = true;
+    }
+  }, 300);
+}
+
+elements.settingsBtn.onclick = (e) => {
+  e.stopPropagation();
+  showSettings();
+};
+
+elements.settingsPanel.onclick = (e) => {
+  e.stopPropagation();
+};
+
+document.addEventListener("click", () => {
+  if (elements.settingsContainer.classList.contains("expanded")) {
+    hideSettings();
+  }
+});
+
+elements.confirmBtn.onclick = async () => {
+  const book = elements.bookInput.value.trim();
+  const index = elements.indexInput.value.trim();
+
+  if (book && index) {
+    state.book = book;
+    state.index = parseInt(index);
+    localStorage.setItem("book", state.book);
+    localStorage.setItem("index", state.index);
+    elements.container.innerHTML = "";
+    hideSettings();
+
+    if (await loadChapter(state.index)) {
+      loadChapter(state.index + 1);
+    }
+  }
+};
+
 async function getData(book, index) {
   try {
     const url = `http://www.shengxuxu.net/${book}/read_${index}.html`;
     const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
 
     if (response.ok) {
-      const html = new DOMParser().parseFromString(
-        await response.text(),
-        "text/html"
-      );
+      const html = new DOMParser().parseFromString(await response.text(), "text/html");
       const title = html.querySelector("h1 a").textContent.trim();
       const div = html.getElementById("chaptercontent");
       div.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
@@ -15,11 +77,11 @@ async function getData(book, index) {
       lines = lines.map((line) => line.trim());
       lines = lines.filter((line) => line.length > 0);
       const content = "　　" + lines.join("\n　　");
-      const next = `/?book=${book}&index=${parseInt(index) + 1}`;
       return {
         title: title,
         content: content,
-        next: next,
+        book: book,
+        index: index,
       };
     }
   } catch {
@@ -29,89 +91,87 @@ async function getData(book, index) {
   return null;
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const book = params.get("book");
-    const index = params.get("index");
-    const main = document.getElementById("main");
-    const title = document.getElementById("title");
-    const content = document.getElementById("content");
-    const next = document.getElementById("next");
-    const currentCache = localStorage.getItem("currentCache");
-    const currentData = currentCache ? JSON.parse(currentCache) : null;
-    const nextCache = localStorage.getItem("nextCache");
-    const nextData = nextCache ? JSON.parse(nextCache) : null;
-    let data = null;
+function createChapterElement(data) {
+  const article = document.createElement("article");
+  article.className = "chapter";
+  article.dataset.index = data.index;
+  article.dataset.book = data.book;
+  const h1 = document.createElement("h1");
+  h1.textContent = data.title;
+  const div = document.createElement("div");
+  div.className = "content";
+  div.textContent = data.content;
+  article.appendChild(h1);
+  article.appendChild(div);
+  return article;
+}
 
-    if (
-      currentData &&
-      currentData.book === book &&
-      currentData.index === index
-    ) {
-      data = currentData.data;
-    }
-
-    if (
-      !data &&
-      nextData &&
-      nextData.book === book &&
-      nextData.index === index
-    ) {
-      data = nextData.data;
-      localStorage.setItem(
-        "currentCache",
-        JSON.stringify({
-          book: book,
-          index: index,
-          data: data,
-        })
-      );
-    }
-
-    if (!data) {
-      data = await getData(book, index);
-      localStorage.setItem(
-        "currentCache",
-        JSON.stringify({
-          book: book,
-          index: index,
-          data: data,
-        })
-      );
-    }
-
-    document.title = data.title;
-    title.textContent = data.title;
-    content.textContent = data.content;
-    next.onclick = () => {
-      window.location.href = data.next;
-    };
-    main.hidden = false;
-    const nextUrl = new URL(data.next, window.location.href);
-    const nextBook = nextUrl.searchParams.get("book");
-    const nextIndex = nextUrl.searchParams.get("index");
-
-    if (
-      !nextData ||
-      nextData.book !== nextBook ||
-      nextData.index !== nextIndex
-    ) {
-      localStorage.setItem(
-        "nextCache",
-        JSON.stringify({
-          book: nextBook,
-          index: nextIndex,
-          data: await getData(nextBook, nextIndex),
-        })
-      );
-    }
-
-    return;
-  } catch {
-    // Error
+async function loadChapter(index) {
+  if (state.loadingIndices.has(index)) {
+    return false;
   }
 
-  localStorage.removeItem("currentCache");
-  localStorage.removeItem("nextCache");
+  if (document.querySelector(`.chapter[data-index="${index}"]`)) {
+    return false;
+  }
+
+  state.loadingIndices.add(index);
+  const data = await getData(state.book, index);
+  state.loadingIndices.delete(index);
+
+  if (data) {
+    if (document.querySelector(`.chapter[data-index="${index}"]`)) {
+      return true;
+    }
+
+    const el = createChapterElement(data);
+    elements.container.appendChild(el);
+    observeChapter(el);
+    return true;
+  } else {
+    if (elements.container.children.length === 0) {
+      showSettings();
+    }
+
+    return false;
+  }
+}
+
+function observeChapter(el) {
+  observer.observe(el);
+}
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        handleChapterVisible(parseInt(entry.target.dataset.index));
+      }
+    });
+  },
+  { rootMargin: "-5% 0px -95% 0px" }
+);
+
+async function handleChapterVisible(index) {
+  if (state.index !== index) {
+    state.index = index;
+    localStorage.setItem("index", index);
+  }
+
+  loadChapter(index + 1);
+  const oldChapter = document.querySelector(`.chapter[data-index="${index - 2}"]`);
+
+  if (oldChapter) {
+    observer.unobserve(oldChapter);
+    oldChapter.remove();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  if (state.book && state.index && (await loadChapter(state.index))) {
+    await loadChapter(state.index + 1);
+    return;
+  }
+
+  showSettings();
 });

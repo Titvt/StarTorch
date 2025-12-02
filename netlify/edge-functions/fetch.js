@@ -8,10 +8,7 @@ export default async (request) => {
       const response = await fetch(url);
 
       if (response.ok) {
-        return new Response(
-          new TextDecoder("utf-8").decode(await response.arrayBuffer()),
-          { status: 200 }
-        );
+        return new Response(new TextDecoder("utf-8").decode(await response.arrayBuffer()), { status: 200 });
       }
     }
   } catch {

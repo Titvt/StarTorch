@@ -1,200 +1,251 @@
 body {
+  background: white;
+  color: black;
   margin: 0;
   padding: 0;
-  color: black;
-  background: white;
 }
 
-#title {
-  margin: 16px;
+#settings-container {
+  left: 16px;
+  position: fixed;
+  top: 16px;
+  z-index: 999;
+}
+
+.glass-panel {
+  align-items: center;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  left: 0;
+  opacity: 0;
+  padding: 24px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  transform: scale(0.5);
+  transform-origin: top left;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.3s;
+  visibility: hidden;
+  width: calc(min(600px, 100vw) - 80px);
+}
+
+#settings-container.expanded .glass-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+  visibility: visible;
+}
+
+#settings-btn-wrapper {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#settings-container.expanded #settings-btn-wrapper {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+.input-group {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.input-group label {
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 50px;
+}
+
+.glass-panel input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-sizing: border-box;
+  flex: 1;
+  font-size: 16px;
+  outline: none;
+  padding: 12px;
+  width: auto;
+}
+
+#chapters-container {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 0 16px;
+}
+
+.chapter {
+  margin-top: 72px;
+}
+
+.chapter h1 {
   font-size: 32px;
   font-weight: bold;
   line-height: 2;
+  margin: 16px 0;
   text-align: center;
   text-justify: inter-ideograph;
   word-break: break-word;
 }
 
-#content {
-  margin: 0 16px 72px;
+.chapter .content {
   font-size: 24px;
   line-height: 2;
+  margin: 0;
   text-align: justify;
   text-justify: inter-ideograph;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-.footer {
-  display: flex;
-  gap: 16px;
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  width: fit-content;
-  transform: translateX(-50%);
-}
-
 @property --angle-1 {
-  syntax: "<angle>";
   inherits: false;
   initial-value: -75deg;
+  syntax: "<angle>";
 }
 
 @property --angle-2 {
-  syntax: "<angle>";
   inherits: false;
   initial-value: -45deg;
+  syntax: "<angle>";
 }
 
 :root {
-  --global--size: clamp(2rem, 4vw, 5rem);
-  --anim--hover-time: 100ms;
   --anim--hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --anim--hover-time: 100ms;
+  --global--size: clamp(2rem, 4vw, 5rem);
 }
 
 .glass-button {
-  position: relative;
-  z-index: 2;
-  border-radius: 999vw;
   background: transparent;
+  border-radius: 999vw;
   pointer-events: none;
+  position: relative;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  z-index: 2;
 }
 
 .glass-button > button {
   --border-width: clamp(1px, 0.0625em, 4px);
   all: unset;
-  cursor: pointer;
-  position: relative;
-  pointer-events: auto;
-  z-index: 3;
-  background: linear-gradient(
-    -75deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.2),
-    rgba(255, 255, 255, 0.05)
-  );
-  border-radius: 999vw;
-  box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-    0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.2),
-    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2),
-    0 0 0 0 rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
+  background: linear-gradient(-75deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+  border-radius: 999vw;
+  box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05), inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5), 0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.2), 0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2), 0 0 0 0 rgba(255, 255, 255, 1);
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  z-index: 3;
 }
 
 .glass-button > button::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  inset: 0;
+  background: conic-gradient(from var(--angle-1) at 50% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, 0.5)), linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
   border-radius: 999vw;
-  width: calc(100% + var(--border-width));
-  height: calc(100% + var(--border-width));
-  top: calc(0% - var(--border-width) / 2);
-  left: calc(0% - var(--border-width) / 2);
-  padding: var(--border-width);
+  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
   box-sizing: border-box;
-  background: conic-gradient(
-      from var(--angle-1) at 50% 50%,
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0) 5% 40%,
-      rgba(0, 0, 0, 0.5) 50%,
-      rgba(0, 0, 0, 0) 60% 95%,
-      rgba(0, 0, 0, 0.5)
-    ),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
+  content: "";
+  height: calc(100% + var(--border-width));
+  inset: 0;
+  left: calc(0% - var(--border-width) / 2);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease),
-    --angle-1 500ms ease;
-  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+  padding: var(--border-width);
+  position: absolute;
+  top: calc(0% - var(--border-width) / 2);
+  transition: all var(--anim--hover-time) var(--anim--hover-ease), --angle-1 500ms ease;
+  width: calc(100% + var(--border-width));
+  z-index: 1;
 }
 
 .glass-button > div {
   --shadow-cuttoff-fix: 2em;
-  position: absolute;
-  width: calc(100% + var(--shadow-cuttoff-fix));
-  height: calc(100% + var(--shadow-cuttoff-fix));
-  top: calc(0% - var(--shadow-cuttoff-fix) / 2);
-  left: calc(0% - var(--shadow-cuttoff-fix) / 2);
   filter: blur(clamp(2px, 0.125em, 12px));
+  height: calc(100% + var(--shadow-cuttoff-fix));
+  left: calc(0% - var(--shadow-cuttoff-fix) / 2);
   overflow: visible;
   pointer-events: none;
+  position: absolute;
+  top: calc(0% - var(--shadow-cuttoff-fix) / 2);
+  width: calc(100% + var(--shadow-cuttoff-fix));
 }
 
 .glass-button > div::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  border-radius: 999vw;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
-  width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
-  height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
-  top: calc(var(--shadow-cuttoff-fix) - 0.5em);
-  left: calc(var(--shadow-cuttoff-fix) - 0.875em);
-  padding: 0.125em;
+  border-radius: 999vw;
   box-sizing: border-box;
+  content: "";
+  height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+  inset: 0;
+  left: calc(var(--shadow-cuttoff-fix) / 2 + 0.125em);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  overflow: visible;
   opacity: 1;
+  overflow: visible;
+  padding: 0.125em;
+  position: absolute;
+  top: calc(var(--shadow-cuttoff-fix) / 2 + 0.125em);
+  transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
+  z-index: 0;
+}
+
+.glass-button > button > svg {
+  color: black;
+  display: block;
+  height: 24px;
+  padding: 0.875em;
+  transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  width: 24px;
 }
 
 .glass-button > button > span {
-  position: relative;
-  display: block;
-  user-select: none;
   color: black;
+  display: block;
   font-size: 20px;
   font-weight: bold;
   line-height: 1;
-  transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  padding-inline: 1.5em;
   padding-block: 0.875em;
+  padding-inline: 1.5em;
+  position: relative;
+  transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  user-select: none;
 }
 
 .glass-button > button > span::after {
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: 1;
-  width: calc(100% - var(--border-width));
-  height: calc(100% - var(--border-width));
-  top: calc(0% + var(--border-width) / 2);
-  left: calc(0% + var(--border-width) / 2);
-  box-sizing: border-box;
-  border-radius: 999vw;
-  overflow: clip;
-  background: linear-gradient(
-    var(--angle-2),
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.5) 40% 50%,
-    rgba(255, 255, 255, 0) 55%
-  );
-  z-index: 3;
-  mix-blend-mode: screen;
-  pointer-events: none;
-  background-size: 200% 200%;
+  background: linear-gradient(var(--angle-2), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 40% 50%, rgba(255, 255, 255, 0) 55%);
   background-position: 0% 50%;
   background-repeat: no-repeat;
-  transition: background-position calc(var(--anim--hover-time) * 1.25)
-      var(--anim--hover-ease),
-    --angle-2 calc(var(--anim--hover-time) * 1.25) var(--anim--hover-ease);
+  background-size: 200% 200%;
+  border-radius: 999vw;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: calc(100% - var(--border-width));
+  left: calc(0% + var(--border-width) / 2);
+  mix-blend-mode: screen;
+  overflow: clip;
+  pointer-events: none;
+  position: absolute;
+  top: calc(0% + var(--border-width) / 2);
+  transition: background-position calc(var(--anim--hover-time) * 1.25) var(--anim--hover-ease), --angle-2 calc(var(--anim--hover-time) * 1.25) var(--anim--hover-ease);
+  width: calc(100% - var(--border-width));
+  z-index: 1;
+  z-index: 3;
 }
 
 .glass-button > button:hover {
-  transform: scale(0.975);
   backdrop-filter: blur(0.01em);
-  box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-    0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25),
-    0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.5),
-    0 0 0 0 rgba(255, 255, 255, 1);
+  box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05), inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5), 0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25), 0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.5), 0 0 0 0 rgba(255, 255, 255, 1);
 }
 
 .glass-button > button:hover::after {
@@ -207,8 +258,8 @@ body {
 }
 
 .glass-button:has(button:hover) > div::after {
-  top: calc(var(--shadow-cuttoff-fix) - 0.875em);
   opacity: 1;
+  top: calc(var(--shadow-cuttoff-fix) - 0.875em);
 }
 
 .glass-button > button:hover > span::after {

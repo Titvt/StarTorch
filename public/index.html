@@ -7,17 +7,36 @@
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <main id="main" hidden>
-      <h1 id="title"></h1>
-      <div id="content"></div>
-      <div class="footer">
+    <div id="settings-container">
+      <div class="glass-button" id="settings-btn-wrapper">
+        <button id="settings-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div></div>
+      </div>
+      <div class="glass-panel" id="settings-panel" hidden>
+        <div class="input-group">
+          <label for="book-input">Book</label>
+          <input type="text" id="book-input" />
+        </div>
+        <div class="input-group">
+          <label for="index-input">Index</label>
+          <input type="text" id="index-input" />
+        </div>
         <div class="glass-button">
-          <button id="next">
-            <span>下一章</span>
+          <button id="confirm-btn">
+            <span>确定</span>
           </button>
           <div></div>
         </div>
       </div>
+    </div>
+    <main id="main">
+      <div id="chapters-container"></div>
     </main>
     <script src="/main.js"></script>
   </body>
