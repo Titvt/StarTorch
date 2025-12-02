@@ -159,12 +159,6 @@ async function handleChapterVisible(index) {
   }
 
   loadChapter(index + 1);
-  const oldChapter = document.querySelector(`.chapter[data-index="${index - 2}"]`);
-
-  if (oldChapter) {
-    observer.unobserve(oldChapter);
-    oldChapter.remove();
-  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
