@@ -329,3 +329,28 @@ body {
 .glass-button > button:hover > span::after {
   background-position: 25% 50%;
 }
+#auto-scroll-controls {
+  display: none;
+  justify-content: center;
+  margin-top: 16px;
+}
+#auto-scroll-toggle {
+  text-align: center;
+}
+#auto-scroll-toggle span {
+  font-size: 16px;
+}
+#speed-decrease,
+#speed-increase {
+  align-items: center;
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  padding: 0;
+  width: 44px;
+}
+#scroll-speed-display {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}

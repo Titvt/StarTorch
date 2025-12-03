@@ -15,12 +15,111 @@ const elements = {
   chapterList: document.getElementById("chapter-list"),
   chapterListWrapper: document.getElementById("chapter-list-wrapper"),
   searchResults: document.getElementById("search-results"),
+  autoScrollControls: document.getElementById("auto-scroll-controls"),
+  autoScrollToggle: document.getElementById("auto-scroll-toggle"),
+  speedDecrease: document.getElementById("speed-decrease"),
+  speedIncrease: document.getElementById("speed-increase"),
+  speedDisplay: document.getElementById("scroll-speed-display"),
+};
+
+let autoScrollState = {
+  active: false,
+  speed: parseInt(localStorage.getItem("autoScrollSpeed")) || 60,
+  lastTime: 0,
+  accumulator: 0,
+  animationFrameId: null,
+};
+
+function updateAutoScrollUI() {
+  const span = elements.autoScrollToggle.querySelector("span");
+  span.textContent = autoScrollState.active ? "停止翻页" : "自动翻页";
+  elements.speedDisplay.textContent = autoScrollState.speed;
+}
+
+function autoScrollLoop(timestamp) {
+  if (!autoScrollState.active) {
+    return;
+  }
+
+  if (!autoScrollState.lastTime) {
+    autoScrollState.lastTime = timestamp;
+  }
+
+  const deltaTime = timestamp - autoScrollState.lastTime;
+  autoScrollState.lastTime = timestamp;
+  const pixelsToScroll = (autoScrollState.speed * deltaTime) / 1000;
+  autoScrollState.accumulator += pixelsToScroll;
+
+  if (autoScrollState.accumulator >= 1) {
+    const pixels = Math.floor(autoScrollState.accumulator);
+    window.scrollBy(0, pixels);
+    autoScrollState.accumulator -= pixels;
+  }
+
+  autoScrollState.animationFrameId = requestAnimationFrame(autoScrollLoop);
+}
+
+function startAutoScroll() {
+  if (autoScrollState.active) {
+    return;
+  }
+
+  autoScrollState.active = true;
+  autoScrollState.lastTime = 0;
+  autoScrollState.accumulator = 0;
+  updateAutoScrollUI();
+  autoScrollState.animationFrameId = requestAnimationFrame(autoScrollLoop);
+}
+
+function stopAutoScroll() {
+  if (!autoScrollState.active) {
+    return;
+  }
+
+  autoScrollState.active = false;
+  updateAutoScrollUI();
+
+  if (autoScrollState.animationFrameId) {
+    cancelAnimationFrame(autoScrollState.animationFrameId);
+    autoScrollState.animationFrameId = null;
+  }
+}
+
+elements.autoScrollToggle.onclick = (e) => {
+  e.stopPropagation();
+
+  if (autoScrollState.active) {
+    stopAutoScroll();
+  } else {
+    startAutoScroll();
+  }
+};
+
+elements.speedDecrease.onclick = (e) => {
+  e.stopPropagation();
+
+  if (autoScrollState.speed > 30) {
+    autoScrollState.speed -= 5;
+    localStorage.setItem("autoScrollSpeed", autoScrollState.speed);
+    updateAutoScrollUI();
+  }
+};
+
+elements.speedIncrease.onclick = (e) => {
+  e.stopPropagation();
+
+  if (autoScrollState.speed < 120) {
+    autoScrollState.speed += 5;
+    localStorage.setItem("autoScrollSpeed", autoScrollState.speed);
+    updateAutoScrollUI();
+  }
 };
 
 function showSettings() {
   elements.bookInput.value = "";
   elements.settingsPanel.hidden = false;
   elements.settingsContainer.classList.add("expanded");
+  updateAutoScrollUI();
   renderChapterList();
   const activeItem = elements.chapterList.querySelector(".chapter-item.active");
 
@@ -216,8 +315,10 @@ function renderChapterList() {
 
   if (state.chapterList.length > 0) {
     elements.chapterListWrapper.style.display = "flex";
+    elements.autoScrollControls.style.display = "flex";
   } else {
     elements.chapterListWrapper.style.display = "none";
+    elements.autoScrollControls.style.display = "none";
   }
 
   state.chapterList.forEach((chapter) => {
