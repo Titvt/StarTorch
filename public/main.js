@@ -395,7 +395,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 let scrollTimeout = null;
 window.addEventListener("scroll", () => {
-  if (!state.currentUrl || scrollTimeout) {
+  if (scrollTimeout || !state.currentUrl) {
     return;
   }
 
@@ -411,5 +411,5 @@ window.addEventListener("scroll", () => {
     }
 
     scrollTimeout = null;
-  }, 100);
+  }, 1000);
 });
