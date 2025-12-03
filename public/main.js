@@ -143,6 +143,7 @@ function renderSearchResults(results) {
             localStorage.setItem("book", state.book);
             state.currentUrl = null;
             localStorage.removeItem("currentUrl");
+            localStorage.removeItem("readingProgress");
             state.currentUrl = state.chapterList[0].url;
             localStorage.setItem("currentUrl", state.currentUrl);
             await loadChapter(state.currentUrl);
@@ -195,6 +196,7 @@ async function loadChapterList(book) {
       });
 
       const metaTitle = doc.querySelector('meta[property="og:novel:book_name"]');
+
       if (metaTitle) {
         document.title = metaTitle.content;
       }
@@ -313,6 +315,20 @@ async function loadChapter(url) {
     const el = createChapterElement(data);
     elements.container.appendChild(el);
     observeChapter(el);
+
+    if (url === state.currentUrl) {
+      const savedProgress = localStorage.getItem("readingProgress");
+
+      if (savedProgress) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: el.offsetTop + parseInt(savedProgress),
+            behavior: "auto",
+          });
+        }, 0);
+      }
+    }
+
     return true;
   } else {
     if (elements.container.children.length === 0) {
@@ -375,4 +391,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   showSettings();
+});
+
+let scrollTimeout = null;
+window.addEventListener("scroll", () => {
+  if (!state.currentUrl || scrollTimeout) {
+    return;
+  }
+
+  scrollTimeout = setTimeout(() => {
+    const currentChapterEl = document.querySelector(`.chapter[data-url="${CSS.escape(state.currentUrl)}"]`);
+
+    if (currentChapterEl) {
+      const relativeTop = window.scrollY - currentChapterEl.offsetTop;
+
+      if (relativeTop >= 0) {
+        localStorage.setItem("readingProgress", relativeTop);
+      }
+    }
+
+    scrollTimeout = null;
+  }, 100);
 });
