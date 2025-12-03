@@ -20,22 +20,21 @@
       </div>
       <div class="glass-panel" id="settings-panel" hidden>
         <div class="input-group">
-          <label for="book-input">Book</label>
           <input type="text" id="book-input" />
+          <div class="glass-button">
+            <button id="confirm-btn">
+              <span>搜索</span>
+            </button>
+            <div></div>
+          </div>
         </div>
-        <div class="input-group">
-          <label for="index-input">Index</label>
-          <input type="text" id="index-input" />
-        </div>
-        <div class="glass-button">
-          <button id="confirm-btn">
-            <span>确定</span>
-          </button>
-          <div></div>
+        <div id="chapter-list-wrapper">
+          <div id="chapter-list"></div>
         </div>
       </div>
     </div>
     <main id="main">
+      <div id="search-results" hidden></div>
       <div id="chapters-container"></div>
     </main>
     <script src="/main.js"></script>

@@ -4,14 +4,16 @@ body {
   margin: 0;
   padding: 0;
 }
-
+::-webkit-scrollbar {
+  display: none;
+}
 #settings-container {
   left: 16px;
   position: fixed;
   top: 16px;
+  width: calc(min(432px, 100vw) - 32px);
   z-index: 999;
 }
-
 .glass-panel {
   align-items: center;
   backdrop-filter: blur(10px);
@@ -20,9 +22,11 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  height: auto;
   left: 0;
+  max-height: calc(80vh - 32px);
   opacity: 0;
+  overflow: hidden;
   padding: 24px;
   pointer-events: none;
   position: absolute;
@@ -31,39 +35,68 @@ body {
   transform-origin: top left;
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.3s;
   visibility: hidden;
-  width: calc(min(600px, 100vw) - 80px);
 }
-
+#chapter-list-wrapper {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 24px;
+}
+#chapter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  width: 100%;
+}
+.chapter-item {
+  border-radius: 8px;
+  color: #333;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1.4;
+  padding: 10px 12px;
+  transition: background 0.2s;
+}
+.chapter-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.chapter-item.active {
+  background: rgba(0, 0, 0, 0.1);
+  color: #000;
+  font-weight: bold;
+}
 #settings-container.expanded .glass-panel {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1);
   visibility: visible;
 }
-
+#settings-panel {
+  z-index: 3;
+}
 #settings-btn-wrapper {
+  margin: 8px;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
 #settings-container.expanded #settings-btn-wrapper {
   opacity: 0;
   pointer-events: none;
   transform: scale(0.8);
 }
-
 .input-group {
   align-items: center;
   display: flex;
   gap: 12px;
   width: 100%;
 }
-
 .input-group label {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   min-width: 50px;
 }
-
 .glass-panel input {
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -73,20 +106,66 @@ body {
   font-size: 16px;
   outline: none;
   padding: 12px;
-  width: auto;
+  width: 100%;
 }
-
+#confirm-btn {
+  align-items: center;
+  color: #000;
+  display: flex;
+  font-size: 15px;
+  font-weight: bold;
+  height: 44px;
+  justify-content: center;
+  padding: 0 0px;
+}
+#confirm-btn:hover {
+  box-shadow: none;
+  transform: none;
+}
+#confirm-btn:active {
+  transform: none;
+}
+#search-results {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 109px 16px 16px;
+  text-align: center;
+}
+#search-results[hidden] {
+  display: none !important;
+}
+.search-item {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 16px;
+  transition: background 0.2s;
+}
+.search-item:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+.search-item-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.search-item-author {
+  color: #666;
+  font-size: 14px;
+}
 #chapters-container {
   box-sizing: border-box;
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 960px;
   padding: 0 16px;
 }
-
 .chapter {
-  margin-top: 72px;
+  margin-top: 93px;
 }
-
 .chapter h1 {
   font-size: 32px;
   font-weight: bold;
@@ -96,7 +175,6 @@ body {
   text-justify: inter-ideograph;
   word-break: break-word;
 }
-
 .chapter .content {
   font-size: 24px;
   line-height: 2;
@@ -106,34 +184,30 @@ body {
   white-space: pre-wrap;
   word-break: break-word;
 }
-
 @property --angle-1 {
   inherits: false;
   initial-value: -75deg;
   syntax: "<angle>";
 }
-
 @property --angle-2 {
   inherits: false;
   initial-value: -45deg;
   syntax: "<angle>";
 }
-
 :root {
   --anim--hover-ease: cubic-bezier(0.25, 1, 0.5, 1);
   --anim--hover-time: 100ms;
   --global--size: clamp(2rem, 4vw, 5rem);
 }
-
 .glass-button {
   background: transparent;
   border-radius: 999vw;
   pointer-events: none;
   position: relative;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
+  width: fit-content;
   z-index: 2;
 }
-
 .glass-button > button {
   --border-width: clamp(1px, 0.0625em, 4px);
   all: unset;
@@ -147,7 +221,6 @@ body {
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
   z-index: 3;
 }
-
 .glass-button > button::after {
   background: conic-gradient(from var(--angle-1) at 50% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%, rgba(0, 0, 0, 0.5)), linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
   border-radius: 999vw;
@@ -166,7 +239,6 @@ body {
   width: calc(100% + var(--border-width));
   z-index: 1;
 }
-
 .glass-button > div {
   --shadow-cuttoff-fix: 2em;
   filter: blur(clamp(2px, 0.125em, 12px));
@@ -178,7 +250,6 @@ body {
   top: calc(0% - var(--shadow-cuttoff-fix) / 2);
   width: calc(100% + var(--shadow-cuttoff-fix));
 }
-
 .glass-button > div::after {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
   border-radius: 999vw;
@@ -198,16 +269,14 @@ body {
   width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
   z-index: 0;
 }
-
 .glass-button > button > svg {
   color: black;
   display: block;
-  height: 24px;
+  height: 32px;
   padding: 0.875em;
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
-  width: 24px;
+  width: 32px;
 }
-
 .glass-button > button > span {
   color: black;
   display: block;
@@ -220,7 +289,6 @@ body {
   transition: all var(--anim--hover-time) var(--anim--hover-ease);
   user-select: none;
 }
-
 .glass-button > button > span::after {
   background: linear-gradient(var(--angle-2), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 40% 50%, rgba(255, 255, 255, 0) 55%);
   background-position: 0% 50%;
@@ -242,26 +310,21 @@ body {
   z-index: 1;
   z-index: 3;
 }
-
 .glass-button > button:hover {
   backdrop-filter: blur(0.01em);
   box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05), inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5), 0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25), 0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.5), 0 0 0 0 rgba(255, 255, 255, 1);
 }
-
 .glass-button > button:hover::after {
   --angle-1: -125deg;
 }
-
 .glass-button:has(button:hover) > div {
   filter: blur(clamp(2px, 0.0625em, 6px));
   transition: filter var(--anim--hover-time) var(--anim--hover-ease);
 }
-
 .glass-button:has(button:hover) > div::after {
   opacity: 1;
   top: calc(var(--shadow-cuttoff-fix) - 0.875em);
 }
-
 .glass-button > button:hover > span::after {
   background-position: 25% 50%;
 }
