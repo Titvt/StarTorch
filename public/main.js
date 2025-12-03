@@ -26,7 +26,7 @@ let autoScrollState = {
   active: false,
   speed: parseInt(localStorage.getItem("autoScrollSpeed")) || 60,
   lastTime: 0,
-  accumulator: 0,
+  virtualY: 0,
   animationFrameId: null,
 };
 
@@ -43,19 +43,15 @@ function autoScrollLoop(timestamp) {
 
   if (!autoScrollState.lastTime) {
     autoScrollState.lastTime = timestamp;
+    autoScrollState.virtualY = window.scrollY;
   }
 
   const deltaTime = timestamp - autoScrollState.lastTime;
   autoScrollState.lastTime = timestamp;
-  const pixelsToScroll = (autoScrollState.speed * deltaTime) / 1000;
-  autoScrollState.accumulator += pixelsToScroll;
-
-  if (autoScrollState.accumulator >= 1) {
-    const pixels = Math.floor(autoScrollState.accumulator);
-    window.scrollBy(0, pixels);
-    autoScrollState.accumulator -= pixels;
-  }
-
+  const safeDelta = Math.min(deltaTime, 50);
+  const pixelsToScroll = (autoScrollState.speed * safeDelta) / 1000;
+  autoScrollState.virtualY += pixelsToScroll;
+  window.scrollTo(0, autoScrollState.virtualY);
   autoScrollState.animationFrameId = requestAnimationFrame(autoScrollLoop);
 }
 
@@ -66,7 +62,7 @@ function startAutoScroll() {
 
   autoScrollState.active = true;
   autoScrollState.lastTime = 0;
-  autoScrollState.accumulator = 0;
+  autoScrollState.virtualY = window.scrollY;
   updateAutoScrollUI();
   autoScrollState.animationFrameId = requestAnimationFrame(autoScrollLoop);
 }
