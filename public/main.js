@@ -10,6 +10,12 @@ const elements = {
   settingsContainer: document.getElementById("settings-container"),
   settingsBtn: document.getElementById("settings-btn"),
   settingsPanel: document.getElementById("settings-panel"),
+  appearanceContainer: document.getElementById("appearance-container"),
+  appearanceBtn: document.getElementById("appearance-btn"),
+  appearancePanel: document.getElementById("appearance-panel"),
+  fontDecrease: document.getElementById("font-decrease"),
+  fontIncrease: document.getElementById("font-increase"),
+  fontSizeDisplay: document.getElementById("font-size-display"),
   bookInput: document.getElementById("book-input"),
   confirmBtn: document.getElementById("confirm-btn"),
   chapterList: document.getElementById("chapter-list"),
@@ -28,6 +34,10 @@ let autoScrollState = {
   lastTime: 0,
   virtualY: 0,
   animationFrameId: null,
+};
+
+let appearanceState = {
+  fontSize: parseInt(localStorage.getItem("fontSize")) || 24,
 };
 
 function updateAutoScrollUI() {
@@ -111,7 +121,36 @@ elements.speedIncrease.onclick = (e) => {
   }
 };
 
+function updateFontSizeUI() {
+  elements.fontSizeDisplay.textContent = appearanceState.fontSize;
+  document.documentElement.style.setProperty("--font-size", `${appearanceState.fontSize}px`);
+}
+
+elements.fontDecrease.onclick = (e) => {
+  e.stopPropagation();
+
+  if (appearanceState.fontSize > 12) {
+    appearanceState.fontSize--;
+    localStorage.setItem("fontSize", appearanceState.fontSize);
+    updateFontSizeUI();
+  }
+};
+
+elements.fontIncrease.onclick = (e) => {
+  e.stopPropagation();
+
+  if (appearanceState.fontSize < 36) {
+    appearanceState.fontSize++;
+    localStorage.setItem("fontSize", appearanceState.fontSize);
+    updateFontSizeUI();
+  }
+};
+
 function showSettings() {
+  if (elements.appearanceContainer.classList.contains("expanded")) {
+    hideAppearance();
+  }
+
   elements.bookInput.value = "";
   elements.settingsPanel.hidden = false;
   elements.settingsContainer.classList.add("expanded");
@@ -133,6 +172,35 @@ function hideSettings() {
   }, 200);
 }
 
+function showAppearance() {
+  if (elements.settingsContainer.classList.contains("expanded")) {
+    hideSettings();
+  }
+
+  elements.appearancePanel.hidden = false;
+  elements.appearanceContainer.classList.add("expanded");
+  updateFontSizeUI();
+  updateAutoScrollUI();
+}
+
+function hideAppearance() {
+  elements.appearanceContainer.classList.remove("expanded");
+  setTimeout(() => {
+    if (!elements.appearanceContainer.classList.contains("expanded")) {
+      elements.appearancePanel.hidden = true;
+    }
+  }, 200);
+}
+
+elements.appearanceBtn.onclick = (e) => {
+  e.stopPropagation();
+  showAppearance();
+};
+
+elements.appearancePanel.onclick = (e) => {
+  e.stopPropagation();
+};
+
 elements.settingsBtn.onclick = (e) => {
   e.stopPropagation();
   showSettings();
@@ -145,6 +213,10 @@ elements.settingsPanel.onclick = (e) => {
 document.addEventListener("click", () => {
   if (elements.settingsContainer.classList.contains("expanded")) {
     hideSettings();
+  }
+
+  if (elements.appearanceContainer.classList.contains("expanded")) {
+    hideAppearance();
   }
 });
 
@@ -331,6 +403,7 @@ function renderChapterList() {
       }
 
       hideSettings();
+      localStorage.removeItem("readingProgress");
       state.currentUrl = chapter.url;
       localStorage.setItem("currentUrl", state.currentUrl);
       elements.container.innerHTML = "";
@@ -467,6 +540,8 @@ async function handleChapterVisible(url) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  updateFontSizeUI();
+
   if (state.book) {
     const success = await loadChapterList(state.book);
 
@@ -489,7 +564,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   showSettings();
 });
-
 let scrollTimeout = null;
 window.addEventListener("scroll", () => {
   if (scrollTimeout || !state.currentUrl) {

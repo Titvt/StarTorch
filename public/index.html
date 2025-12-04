@@ -7,52 +7,86 @@
     <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
-    <div id="settings-container">
-      <div class="glass-button" id="settings-btn-wrapper">
-        <button id="settings-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-        <div></div>
+    <div id="ui-container">
+      <div id="settings-container">
+        <div class="glass-button" id="settings-btn-wrapper">
+          <button id="settings-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div></div>
+        </div>
+        <div class="glass-panel" id="settings-panel" hidden>
+          <div class="input-group">
+            <input type="text" id="book-input" />
+            <div class="glass-button">
+              <button id="confirm-btn">
+                <span>搜索</span>
+              </button>
+              <div></div>
+            </div>
+          </div>
+          <div id="chapter-list-wrapper">
+            <div id="chapter-list"></div>
+          </div>
+        </div>
       </div>
-      <div class="glass-panel" id="settings-panel" hidden>
-        <div class="input-group">
-          <input type="text" id="book-input" />
-          <div class="glass-button">
-            <button id="confirm-btn">
-              <span>搜索</span>
-            </button>
-            <div></div>
-          </div>
+      <div id="appearance-container">
+        <div class="glass-button" id="appearance-btn-wrapper">
+          <button id="appearance-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+          <div></div>
         </div>
-        <div id="chapter-list-wrapper">
-          <div id="chapter-list"></div>
-        </div>
-        <div class="input-group" id="auto-scroll-controls">
-          <div class="glass-button">
-            <button id="auto-scroll-toggle">
-              <span>自动翻页</span>
-            </button>
-            <div></div>
+        <div class="glass-panel" id="appearance-panel" hidden>
+          <div class="input-group" id="font-size-controls">
+            <div class="settings-text settings-adjust-label">字体大小</div>
+            <div class="glass-button">
+              <button id="font-decrease">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <div></div>
+            </div>
+            <div id="font-size-display" class="settings-adjust-text"></div>
+            <div class="glass-button">
+              <button id="font-increase">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div></div>
+            </div>
           </div>
-          <div class="glass-button">
-            <button id="speed-decrease">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            </button>
-            <div></div>
-          </div>
-          <div id="scroll-speed-display"></div>
-          <div class="glass-button">
-            <button id="speed-increase">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
-            <div></div>
+          <div class="input-group" id="auto-scroll-controls">
+            <div class="glass-button settings-adjust-label">
+              <button id="auto-scroll-toggle">
+                <span>自动翻页</span>
+              </button>
+              <div></div>
+            </div>
+            <div class="glass-button">
+              <button id="speed-decrease">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <div></div>
+            </div>
+            <div id="scroll-speed-display" class="settings-adjust-text"></div>
+            <div class="glass-button">
+              <button id="speed-increase">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div></div>
+            </div>
           </div>
         </div>
       </div>

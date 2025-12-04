@@ -7,12 +7,19 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
-#settings-container {
+#ui-container {
+  display: flex;
+  justify-content: space-between;
   left: 16px;
+  pointer-events: none;
   position: fixed;
+  right: 16px;
   top: 16px;
-  width: calc(min(432px, 100vw) - 32px);
   z-index: 999;
+}
+#settings-container {
+  pointer-events: auto;
+  position: relative;
 }
 .glass-panel {
   align-items: center;
@@ -24,10 +31,10 @@ body {
   flex-direction: column;
   height: auto;
   left: 0;
-  max-height: calc(80vh - 32px);
+  max-height: calc(90vh - 64px);
   opacity: 0;
   overflow: hidden;
-  padding: 24px;
+  padding: 16px;
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -35,6 +42,7 @@ body {
   transform-origin: top left;
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.3s;
   visibility: hidden;
+  width: calc(min(464px, 100vw) - 64px);
 }
 #chapter-list-wrapper {
   display: none;
@@ -89,7 +97,7 @@ body {
 .input-group {
   align-items: center;
   display: flex;
-  gap: 12px;
+  gap: 4px;
   width: 100%;
 }
 .input-group label {
@@ -165,10 +173,10 @@ body {
   padding: 0 16px;
 }
 .chapter {
-  margin-top: 93px;
+  padding-top: 77px;
 }
 .chapter h1 {
-  font-size: 32px;
+  font-size: calc(var(--font-size, 24px) + 8px);
   font-weight: bold;
   line-height: 2;
   margin: 16px 0;
@@ -177,7 +185,7 @@ body {
   word-break: break-word;
 }
 .chapter .content {
-  font-size: 24px;
+  font-size: var(--font-size, 24px);
   line-height: 2;
   margin: 0;
   text-align: justify;
@@ -353,4 +361,66 @@ body {
   font-size: 16px;
   font-weight: bold;
   text-align: center;
+}
+#appearance-container {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  position: relative;
+}
+#appearance-container .glass-panel {
+  left: auto;
+  right: 0;
+  transform-origin: top right;
+  z-index: 3;
+}
+#appearance-container.expanded .glass-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+  visibility: visible;
+}
+#appearance-container.expanded #appearance-btn-wrapper {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+#appearance-btn-wrapper {
+  margin: 8px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#font-size-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+#font-decrease,
+#font-increase {
+  align-items: center;
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  padding: 0;
+  width: 44px;
+}
+#font-size-display {
+  align-items: center;
+  display: flex;
+  font-size: 16px;
+  font-weight: bold;
+  justify-content: center;
+  text-align: center;
+}
+.settings-text {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  width: 113px;
+}
+.settings-adjust-text {
+  width: 32px;
+}
+.settings-adjust-label {
+  margin-right: 8px;
 }
