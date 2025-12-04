@@ -304,7 +304,7 @@ body {
   text-align: center;
 }
 .settings-text {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
   width: 113px;
@@ -321,7 +321,7 @@ body {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  padding-top: 24px;
+  padding-top: 16px;
 }
 #chapter-list {
   display: flex;
