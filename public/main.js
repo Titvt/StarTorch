@@ -73,6 +73,7 @@ function startAutoScroll() {
   autoScrollState.active = true;
   autoScrollState.lastTime = 0;
   autoScrollState.virtualY = window.scrollY;
+  document.body.classList.add("auto-scrolling");
   updateAutoScrollUI();
   autoScrollState.animationFrameId = requestAnimationFrame(autoScrollLoop);
 }
@@ -83,6 +84,7 @@ function stopAutoScroll() {
   }
 
   autoScrollState.active = false;
+  document.body.classList.remove("auto-scrolling");
   updateAutoScrollUI();
 
   if (autoScrollState.animationFrameId) {

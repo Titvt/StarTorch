@@ -113,6 +113,7 @@ body {
   box-sizing: border-box;
   flex: 1;
   font-size: 16px;
+  margin-right: 8px;
   outline: none;
   padding: 12px;
   width: 100%;
@@ -423,4 +424,13 @@ body {
 }
 .settings-adjust-label {
   margin-right: 8px;
+}
+body.auto-scrolling #chapters-container,
+body.auto-scrolling .chapter-item {
+  pointer-events: none;
+  user-select: none;
+}
+body.auto-scrolling #settings-btn-wrapper > button,
+body.auto-scrolling #appearance-btn-wrapper > button {
+  backdrop-filter: none;
 }
