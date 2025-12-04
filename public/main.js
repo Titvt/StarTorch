@@ -154,9 +154,10 @@ elements.fontIncrease.onclick = (e) => {
 };
 
 function showSettings() {
-  elements.bookInput.value = "";
+  elements.settingsBtn.hidden = true;
   elements.settingsPanel.hidden = false;
   elements.settingsContainer.classList.add("expanded");
+  elements.bookInput.value = "";
   renderChapterList();
   const activeItem = elements.chapterList.querySelector(".chapter-item.active");
 
@@ -166,15 +167,13 @@ function showSettings() {
 }
 
 function hideSettings() {
+  elements.settingsBtn.hidden = false;
+  elements.settingsPanel.hidden = true;
   elements.settingsContainer.classList.remove("expanded");
-  setTimeout(() => {
-    if (!elements.settingsContainer.classList.contains("expanded")) {
-      elements.settingsPanel.hidden = true;
-    }
-  }, 200);
 }
 
 function showAppearance() {
+  elements.appearanceBtn.hidden = true;
   elements.appearancePanel.hidden = false;
   elements.appearanceContainer.classList.add("expanded");
   updateFontSizeUI();
@@ -182,12 +181,9 @@ function showAppearance() {
 }
 
 function hideAppearance() {
+  elements.appearanceBtn.hidden = false;
+  elements.appearancePanel.hidden = true;
   elements.appearanceContainer.classList.remove("expanded");
-  setTimeout(() => {
-    if (!elements.appearanceContainer.classList.contains("expanded")) {
-      elements.appearancePanel.hidden = true;
-    }
-  }, 200);
 }
 
 elements.settingsBtn.onclick = (e) => {
