@@ -278,13 +278,15 @@ body {
   pointer-events: none;
   transform: scale(0.8);
 }
+#appearance-panel {
+  gap: 16px;
+}
 #appearance-panel svg {
   padding: 10px;
 }
 #font-size-controls {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
 }
 #font-decrease,
 #font-increase {
@@ -304,8 +306,8 @@ body {
   text-align: center;
 }
 .settings-text {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 20px;
+  font-weight: normal;
   text-align: center;
   width: 113px;
 }
@@ -350,7 +352,6 @@ body {
 #auto-scroll-controls {
   display: none;
   justify-content: center;
-  margin-top: 16px;
 }
 #auto-scroll-toggle {
   text-align: center;
