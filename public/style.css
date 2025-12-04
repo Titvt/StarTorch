@@ -278,6 +278,9 @@ body {
   pointer-events: none;
   transform: scale(0.8);
 }
+#appearance-panel svg {
+  padding: 10px;
+}
 #font-size-controls {
   display: flex;
   justify-content: center;
@@ -368,11 +371,6 @@ body {
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-}
-body.auto-scrolling #chapters-container,
-body.auto-scrolling .chapter-item {
-  pointer-events: none;
-  user-select: none;
 }
 body.auto-scrolling #settings-btn-wrapper > button,
 body.auto-scrolling #appearance-btn-wrapper > button {
