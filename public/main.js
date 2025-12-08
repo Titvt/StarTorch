@@ -154,6 +154,10 @@ elements.fontIncrease.onclick = (e) => {
 };
 
 function showSettings() {
+  if (!elements.appearancePanel.hidden) {
+    hideAppearance();
+  }
+
   elements.settingsBtn.hidden = true;
   elements.settingsPanel.hidden = false;
   elements.settingsContainer.classList.add("expanded");
@@ -173,6 +177,10 @@ function hideSettings() {
 }
 
 function showAppearance() {
+  if (!elements.settingsPanel.hidden) {
+    hideSettings();
+  }
+
   elements.appearanceBtn.hidden = true;
   elements.appearancePanel.hidden = false;
   elements.appearanceContainer.classList.add("expanded");
