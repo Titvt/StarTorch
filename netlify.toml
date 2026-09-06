@@ -5,5 +5,10 @@
   path = "/fetch"
   function = "fetch"
 
+[[redirects]]
+  from = "/:book"
+  to = "/index.html"
+  status = 200
+
 [dev]
   framework = "#static"
