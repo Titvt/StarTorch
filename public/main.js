@@ -1,5 +1,7 @@
+const pathSegments = location.pathname.split("/").filter(Boolean);
 const state = {
-  book: location.pathname.split("/").filter(Boolean).pop() || null,
+  book: pathSegments.pop() || null,
+  category: pathSegments.pop() || "1",
   currentUrl: localStorage.getItem("currentUrl"),
   chapterList: [],
   loadingUrls: new Set(),
@@ -49,9 +51,9 @@ document.addEventListener("click", () => {
   }
 });
 
-async function loadChapterList(book) {
+async function loadChapterList(category, book) {
   try {
-    const url = `https://www.pili45.com/1/${book}/menu/1.html`;
+    const url = `https://www.pili45.com/${category}/${book}/menu/1.html`;
     const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
 
     if (response.ok) {
@@ -97,9 +99,9 @@ async function loadRanking() {
         : [];
       const books = links
         .map((link) => {
-          const match = (link.getAttribute("href") || "").match(/\/(\d+)\/info\.html/);
+          const match = (link.getAttribute("href") || "").match(/\/(\d+)\/(\d+)\/info\.html/);
           const title = link.getAttribute("title") || link.textContent.trim();
-          return match ? { id: match[1], title } : null;
+          return match ? { category: match[1], id: match[2], title } : null;
         })
         .filter((item) => item !== null);
 
@@ -121,7 +123,7 @@ function renderBookList(books) {
     div.className = "book-item";
     div.textContent = book.title;
     div.onclick = () => {
-      location.assign(`/${book.id}`);
+      location.assign(`/${book.category}/${book.id}`);
     };
     list.appendChild(div);
   });
@@ -286,7 +288,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  const success = await loadChapterList(state.book);
+  const success = await loadChapterList(state.category, state.book);
 
   if (success && state.chapterList.length > 0) {
     if (!state.currentUrl || !state.chapterList.some((c) => c.url === state.currentUrl)) {
