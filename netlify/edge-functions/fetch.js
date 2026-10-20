@@ -2,7 +2,7 @@ export default async (request) => {
   try {
     const url = new URL(request.url).searchParams.get("url");
 
-    if (url.startsWith("https://www.pilishuwu.com/")) {
+    if (url.startsWith("https://www.pili45.com/")) {
       const base = await fetch(new URL(url).origin + "/", {
         headers: {
           "User-Agent":

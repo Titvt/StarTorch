@@ -51,7 +51,7 @@ document.addEventListener("click", () => {
 
 async function loadChapterList(book) {
   try {
-    const url = `https://www.pilishuwu.com/1/${book}/menu/1.html`;
+    const url = `https://www.pili45.com/1/${book}/menu/1.html`;
     const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
 
     if (response.ok) {
@@ -61,7 +61,7 @@ async function loadChapterList(book) {
       const links = Array.from(doc.querySelectorAll("ol.works-chapter-list span.works-chapter-item a"));
       state.chapterList = links.map((link) => {
         const href = link.getAttribute("href");
-        const fullUrl = href.startsWith("http") ? href : `https://www.pilishuwu.com${href}`;
+        const fullUrl = href.startsWith("http") ? href : `https://www.pili45.com${href}`;
         return {
           title: link.getAttribute("title") || link.textContent.trim(),
           url: fullUrl,
@@ -86,7 +86,7 @@ async function loadChapterList(book) {
 
 async function loadRanking() {
   try {
-    const url = `https://www.pilishuwu.com/top/list/1/4/1.html`;
+    const url = `https://www.pili45.com/top/list/1/4/1.html`;
     const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
 
     if (response.ok) {
