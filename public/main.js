@@ -1,7 +1,29 @@
+function decodeSegment(segment) {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
+function getNovelPath(book) {
+  return `/novels/${encodeURIComponent(book)}`;
+}
+
+function getChapterUrl(book, title) {
+  return `${getNovelPath(book)}/${encodeURIComponent(title)}.txt`;
+}
+
+function parseLines(text) {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+}
+
 const pathSegments = location.pathname.split("/").filter(Boolean);
 const state = {
-  book: pathSegments.pop() || null,
-  category: pathSegments.pop() || "1",
+  book: pathSegments.length > 0 ? decodeSegment(pathSegments.pop()) : null,
   currentUrl: localStorage.getItem("currentUrl"),
   chapterList: [],
   loadingUrls: new Set(),
@@ -51,31 +73,23 @@ document.addEventListener("click", () => {
   }
 });
 
-async function loadChapterList(category, book) {
+async function loadChapterList(book) {
   try {
-    const url = `https://www.pili45.com/${category}/${book}/menu/1.html`;
-    const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
+    const response = await fetch(`${getNovelPath(book)}/menu.txt`);
 
     if (response.ok) {
-      const htmlString = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlString, "text/html");
-      const links = Array.from(doc.querySelectorAll("ol.works-chapter-list span.works-chapter-item a"));
-      state.chapterList = links.map((link) => {
-        const href = link.getAttribute("href");
-        const fullUrl = href.startsWith("http") ? href : `https://www.pili45.com${href}`;
+      const seen = new Map();
+
+      state.chapterList = parseLines(await response.text()).map((title) => {
+        const count = (seen.get(title) || 0) + 1;
+        seen.set(title, count);
         return {
-          title: link.getAttribute("title") || link.textContent.trim(),
-          url: fullUrl,
+          title: title,
+          url: getChapterUrl(book, count > 1 ? `${title}_${count}` : title),
         };
       });
 
-      const metaTitle = doc.querySelector("title");
-
-      if (metaTitle) {
-        document.title = metaTitle.textContent.split("_")[0].replace(/章节目录$/, "").trim() || "StarTorch";
-      }
-
+      document.title = book || "StarTorch";
       renderChapterList();
       return true;
     }
@@ -86,32 +100,23 @@ async function loadChapterList(category, book) {
   return false;
 }
 
-async function loadRanking() {
+async function loadNovelList() {
   try {
-    const url = `https://www.pili45.com/top/list/1/4/1.html`;
-    const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
+    const response = await fetch("/novels/novels.txt");
 
     if (response.ok) {
-      const html = new DOMParser().parseFromString(await response.text(), "text/html");
-      const tabcon = html.querySelector(".rank-tabcon");
-      const links = tabcon
-        ? Array.from(tabcon.querySelectorAll("ul.rank-ul li a[href*='/info.html']")).slice(0, 100)
-        : [];
-      const books = links
-        .map((link) => {
-          const match = (link.getAttribute("href") || "").match(/\/(\d+)\/(\d+)\/info\.html/);
-          const title = link.getAttribute("title") || link.textContent.trim();
-          return match ? { category: match[1], id: match[2], title } : null;
-        })
-        .filter((item) => item !== null);
+      const books = parseLines(await response.text());
 
       if (books.length > 0) {
         renderBookList(books);
+        return true;
       }
     }
   } catch {
     // Error
   }
+
+  return false;
 }
 
 function renderBookList(books) {
@@ -121,9 +126,9 @@ function renderBookList(books) {
   books.forEach((book) => {
     const div = document.createElement("div");
     div.className = "book-item";
-    div.textContent = book.title;
+    div.textContent = book;
     div.onclick = () => {
-      location.assign(`/${book.category}/${book.id}`);
+      location.assign(`/${encodeURIComponent(book)}`);
     };
     list.appendChild(div);
   });
@@ -170,22 +175,17 @@ function renderChapterList() {
 
 async function getData(url) {
   try {
-    const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
+    const response = await fetch(url);
 
     if (response.ok) {
-      const html = new DOMParser().parseFromString(await response.text(), "text/html");
-      const titleEl = html.querySelector("h3.j_chapterName");
-      const title = titleEl ? titleEl.textContent.trim() : "";
-      const div = html.querySelector(".read-content.j_readContent");
+      const lines = parseLines(await response.text());
 
-      if (div) {
-        let lines = Array.from(div.querySelectorAll("p"))
-          .map((p) => p.textContent.trim())
-          .filter((line) => line.length > 0);
-        const content = "　　" + lines.join("\n　　");
+      if (lines.length > 0) {
+        const chapter = state.chapterList.find((c) => c.url === url);
+        const fileName = url.split("/").pop().replace(/\.txt$/, "");
         return {
-          title: title,
-          content: content,
+          title: chapter ? chapter.title : decodeSegment(fileName),
+          content: "　　" + lines.join("\n　　"),
           url: url,
         };
       }
@@ -284,11 +284,11 @@ async function handleChapterVisible(url) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   if (!state.book) {
-    await loadRanking();
+    await loadNovelList();
     return;
   }
 
-  const success = await loadChapterList(state.category, state.book);
+  const success = await loadChapterList(state.book);
 
   if (success && state.chapterList.length > 0) {
     if (!state.currentUrl || !state.chapterList.some((c) => c.url === state.currentUrl)) {

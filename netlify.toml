@@ -1,12 +1,8 @@
 [build]
   publish = "public"
 
-[[edge_functions]]
-  path = "/fetch"
-  function = "fetch"
-
 [[redirects]]
-  from = "/:category/:book"
+  from = "/:book"
   to = "/index.html"
   status = 200
 
